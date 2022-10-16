@@ -1,13 +1,13 @@
-import pytest
 from os import environ
 
+import pytest
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 
 import urllib3
 urllib3.disable_warnings()
 
+#<<<<<<< parallel-xdist
 
 browsers = [
     {
@@ -35,6 +35,17 @@ def pytest_generate_tests(metafunc):
                              browsers,
                              ids=_generate_param_ids('broswerConfig', browsers),
                              scope='function')
+=======
+@pytest.fixture(scope='function')
+def driver(request):
+    desired_caps = {}
+
+    browser = {
+        "platform": "Windows 10",
+        "browserName": "chrome",
+        "version": "latest"
+    }
+ #>>>>>>> master
 
 def _generate_param_ids(name, values):
     return [("<%s:%s>" % (name, value)).replace('.', '_') for value in values]
@@ -56,17 +67,30 @@ def driver(request, browser_config):
     # we can move this to the config load or not, also messing with this on a test to test basis is possible :)
     desired_caps['tunnel'] = tunnel_id
     desired_caps['name'] = test_name
+#<<<<<<< parallel-xdist
     desired_caps['visual']= True
     desired_caps['network']= True
     desired_caps['console']= True
+#=======
+    desired_caps['video'] = True
+    desired_caps['visual'] = True
+    desired_caps['network'] = True
+    desired_caps['console'] = True
+    caps = {"LT:Options": desired_caps}
+#>>>>>>> master
 
-    executor = RemoteConnection(selenium_endpoint, resolve_ip=False)
+    executor = RemoteConnection(selenium_endpoint)
     browser = webdriver.Remote(
         command_executor=executor,
+#<<<<<<< parallel-xdist
         desired_capabilities=desired_caps, 
         keep_alive=True
+=======
+        desired_capabilities=caps
+#>>>>>>> master
     )
 
+#<<<<<<< parallel-xdist
     if browser is not None:
         print("LambdaTestSessionID={} TestName={}".format(browser.session_id, test_name))
     else:
@@ -80,6 +104,19 @@ def driver(request, browser_config):
     browser.execute_script("lambda-status={}".format(result))
     browser.quit()
 
+=======
+    def fin():
+        # browser.execute_script("lambda-status=".format(str(not request.node.rep_call.failed if "passed" else
+        # "failed").lower()))
+        if request.node.rep_call.failed:
+            browser.execute_script("lambda-status=failed")
+        else:
+            browser.execute_script("lambda-status=passed")
+            browser.quit()
+
+    request.addfinalizer(fin)
+#>>>>>>> master
+
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -88,6 +125,6 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     rep = outcome.get_result()
 
-    # set an report attribute for each phase of a call, which can
+    # set a report attribute for each phase of a call, which can
     # be "setup", "call", "teardown"
     setattr(item, "rep_" + rep.when, rep)
