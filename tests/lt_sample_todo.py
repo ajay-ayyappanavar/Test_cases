@@ -29,7 +29,16 @@ class TestLink:
         Verify item submission
         :return: None
         """
-        driver.get('https://lambdatest.github.io/sample-todo-app/')
+        driver.get(r'https://www.lambdatest.com/selenium-playground/')
+        driver.find_elements(By.XPATH, "//a[contains(text(),'Drag & Drop Sliders')]").click()
+        
+        elem = driver.find_element(By.XPATH,"//body/div[@id='__next']/div[1]/section[3]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/input[1]")
+        ac = ActionChains(browser)
+        ac.move_to_element(elem).move_by_offset(946, 349).click().perform()
+        val = driver.find_element(By.ID,"rangeSuccess").text
+        assert val == '95' , " Value is not equal to 95"
+        
+        
         sample_text = "Happy Testing at LambdaTest"
         email_text_field = driver.find_element(By.ID, "sampletodotext")
         email_text_field.send_keys(sample_text)
