@@ -29,8 +29,14 @@ class TestLink:
         email_text_field = driver.find_element(By.ID, "sampletodotext")
         email_text_field.send_keys(sample_text)
 
+#<<<<<<< parallel-xdist
+        driver.find_element_by_id("addbutton").click()
+        
+        li6 = driver.find_element_by_name("li6")
+=======
         driver.find_element(By.ID, "addbutton").click()
 
         li6 = driver.find_element(By.NAME, "li6")
         # sys.stderr.write(li6)
         # assert sample_text in li6
+#>>>>>>> master
