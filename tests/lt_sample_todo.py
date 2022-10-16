@@ -13,11 +13,16 @@ class TestLink:
         """
         driver.get(r'https://www.lambdatest.com/selenium-playground')
         driver.implicitly_wait(10)
-        driver.find_element(By.NAME, "li1").click()
-        driver.find_element(By.NAME, "li2").click()
-
-        title = "Sample page - lambdatest.com"
-        assert title == driver.title
+        driver.find_element(By.XPATH, "//a[contains(text(),'Simple Form Demo')]").click()
+        url = driver.current_url
+        if “simple-form-demo” in url:
+            print(" URL contains 'simple-form-demo' ")
+        var = “Welcome to LambdaTest”
+        driver.find_element(By.XPATH, "//input[@id='user-message']").send_keys(var)
+        driver.find_element(By.CSS_SELECTOR,"#showInput").click()
+        var_out = driver.find_element(By.CSS_SELECTOR,"#message").text
+        assert var == var_out, " Both the text are not matching"
+        
 
     def test_item(self, driver):
         """
