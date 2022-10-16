@@ -11,7 +11,7 @@ class TestLink:
         Verify click and title of page
         :return: None
         """
-        driver.get('https://lambdatest.github.io/sample-todo-app/')
+        driver.get(r'https://www.lambdatest.com/selenium-playground')
         driver.implicitly_wait(10)
         driver.find_element(By.NAME, "li1").click()
         driver.find_element(By.NAME, "li2").click()
