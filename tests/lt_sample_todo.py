@@ -37,14 +37,4 @@ class TestLink:
         ac.move_to_element(elem).move_by_offset(946, 349).click().perform()
         val = driver.find_element(By.ID,"rangeSuccess").text
         assert val == '95' , " Value is not equal to 95"
-        
-        
-        sample_text = "Happy Testing at LambdaTest"
-        email_text_field = driver.find_element(By.ID, "sampletodotext")
-        email_text_field.send_keys(sample_text)
-
-        driver.find_element(By.ID, "addbutton").click()
-
-        li6 = driver.find_element(By.NAME, "li6")
-        # sys.stderr.write(li6)
-        # assert sample_text in li6
+       
